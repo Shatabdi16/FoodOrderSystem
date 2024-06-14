@@ -1,0 +1,135 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Inventory inventory = new Inventory();
+        OrderSystem orderSystem = new OrderSystem(inventory);
+
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+        do {
+            System.out.println("1. Add Food Item");
+            System.out.println("2. Place Order");
+            System.out.println("3. Display Inventory");
+            System.out.println("0. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter food name: ");
+                    String name = scanner.next();
+                    System.out.print("Enter price: ");
+                    double price = scanner.nextDouble();
+                    inventory.addFoodItem(new FoodItem(name, price));
+                    break;
+                case 2:
+                    System.out.print("Enter food name to order: ");
+                    String orderName = scanner.next();
+                    orderSystem.placeOrder(orderName);
+                    break;
+                case 3:
+                    inventory.displayInventory();
+                    break;
+                case 0:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 0);
+
+        scanner.close();
+    }
+}
+public class FoodItem {
+    private String name;
+    private double price;
+
+    public FoodItem(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    @Override
+    public String toString() {
+        return "FoodItem{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+    }
+}
+import java.util.ArrayList;
+import java.util.List;
+
+public class Inventory {
+    private List<FoodItem> foodItems;
+
+    public Inventory() {
+        foodItems = new ArrayList<>();
+    }
+
+    public void addFoodItem(FoodItem item) {
+        foodItems.add(item);
+        System.out.println(item.getName() + " added to inventory.");
+    }
+
+    public FoodItem getFoodItem(String name) {
+        for (FoodItem item : foodItems) {
+            if (item.getName().equalsIgnoreCase(name)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public void displayInventory() {
+        System.out.println("Current Inventory:");
+        for (FoodItem item : foodItems) {
+            System.out.println(item);
+        }
+    }
+}
+public class Order {
+    private FoodItem foodItem;
+
+    public Order(FoodItem foodItem) {
+        this.foodItem = foodItem;
+    }
+
+    public FoodItem getFoodItem() {
+        return foodItem;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "foodItem=" + foodItem +
+                '}';
+    }
+}
+public class OrderSystem {
+    private Inventory inventory;
+
+    public OrderSystem(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public void placeOrder(String foodName) {
+        FoodItem item = inventory.getFoodItem(foodName);
+        if (item != null) {
+            Order order = new Order(item);
+            System.out.println("Order placed: " + order);
+        } else {
+            System.out.println("Item not found in inventory.");
+        }
+    }
+}
